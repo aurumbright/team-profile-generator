@@ -12,7 +12,7 @@ The following image shows a mock-up of the generated HTML’s appearance and fun
 
 ![A screenshot of a webpage showing profiles of employees in a company including a manager, engineers, and interns](assets/Generate-profiles-screenshot.png)
 
-[Click here to view a short video showcasing the application's functionality](https://drive.google.com/file/d/1bW_fIzABF1Ifuobu7LrzfzYHxz8M4DjZ/view?usp=sharing).
+[Click here to view a short video showcasing the application's functionality](https://drive.google.com/file/d/1v6yqMbkwZSWYRRh2CwgACWXLj3-QqSIg/view?usp=sharing).
 
 
 ## User Story
