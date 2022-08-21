@@ -123,10 +123,7 @@ async function nextEmployeeFunc() {
         const checkForNext = await inquirer.prompt(nextEmployee);
         if (checkForNext.addEmployee) {
             await createTeam();
-            return teamPage;
-        } else {
-            return teamPage;
-        }
+        } 
     } catch (err) {
         console.log(err.name + " in nextEmployeeFunc");
     }
@@ -144,7 +141,6 @@ async function createTeam() {
 
                     let manager = new Manager(eName, id, email, officeNumber);
                     team.push(manager);
-                    await nextEmployeeFunc();
 
                 } catch (err) {
                     console.log(err.name + " in manager creation");
@@ -157,7 +153,6 @@ async function createTeam() {
 
                     let engineer = new Engineer(eName, id, email, github);
                     team.push(engineer);
-                    await nextEmployeeFunc();
 
                 } catch (err) {
                     console.log(err.name + " in engineer creation");
@@ -170,17 +165,17 @@ async function createTeam() {
 
                     let intern = new Intern(eName, id, email, school);
                     team.push(intern);
-                    await nextEmployeeFunc();
 
                 } catch (err) {
                     console.log(err.name + " in intern creation");
                 }
                 break;
         }
-    } catch (error) {
+    } catch (err) {
         console.log(err.name + " in team creation");
     } finally {
-        return team;
+        await nextEmployeeFunc();
+
     }
 }
 
