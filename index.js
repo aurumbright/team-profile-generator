@@ -1,14 +1,30 @@
 const inquirer = require('inquirer');
+const fs = require('fs');
 
-const Employee = require('./lib/Employee');
+const buildPage = require('./src/pagegen');
 const Manager = require('./lib/Manager');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 
+const team = [];
+
 const employeeQuestions = [
     {
+        type: "list",
+        name: "role",
+        message: "What is the employee's role?",
+        choices: [
+            "Manager",
+            "Engineer",
+            "Intern",
+        ],
+    },
+];
+
+const engineerQuestions = [
+    {
         type: 'input',
-        name: 'person',
+        name: 'eName',
         message: 'Enter name: ',
     },
     {
@@ -18,19 +34,16 @@ const employeeQuestions = [
         validate: (answer) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
             if (!emailRegex.test(answer)) {
-              return "You have to provide a valid email address!"
+                return "Please provide a valid email address."
             }
             return true
-          }
+        }
     },
     {
         type: 'input',
         name: 'id',
         message: 'Enter ID: ',
-    }
-];
-
-const engineerQuestions = [
+    },
     {
         type: 'input',
         name: 'github',
@@ -41,6 +54,28 @@ const engineerQuestions = [
 const managerQuestions = [
     {
         type: 'input',
+        name: 'eName',
+        message: 'Enter name: ',
+    },
+    {
+        type: 'input',
+        name: 'email',
+        message: 'Enter employee email address: ',
+        validate: (answer) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if (!emailRegex.test(answer)) {
+                return "Please provide a valid email address."
+            }
+            return true
+        }
+    },
+    {
+        type: 'input',
+        name: 'id',
+        message: 'Enter ID: ',
+    },
+    {
+        type: 'input',
         name: 'officeNumber',
         message: 'Enter office number: ',
     },
@@ -49,25 +84,112 @@ const managerQuestions = [
 const internQuestions = [
     {
         type: 'input',
+        name: 'eName',
+        message: 'Enter name: ',
+    },
+    {
+        type: 'input',
+        name: 'email',
+        message: 'Enter employee email address: ',
+        validate: (answer) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            if (!emailRegex.test(answer)) {
+                return "Please provide a valid email address."
+            }
+            return true
+        }
+    },
+    {
+        type: 'input',
+        name: 'id',
+        message: 'Enter ID: ',
+    },
+    {
+        type: 'input',
         name: 'school',
         message: 'Enter school name: ',
     },
 ];
 
-// needs promise chaining - maybe combine employeeQuestions and xQuestions in questions somehow?
-// asynchronous js? 
-function init() {
-    return inquirer
-        .prompt(questions)
-        // prompt returns a promise - passed as answers
-        .then((answers) => {
-            const teamPageFile = generateTeamPage(answers);
+const nextEmployee = {
+    type: "confirm",
+    name: "addEmployee",
+    message: "Would you like to add another employee?",
+    default: false
+};
 
-            fs.writeFile('team-paged-generated.html', teamPageFile, (err) =>
-                err ? console.log(err) : console.log('Successfully created team page!')
-            );
-        });
+async function nextEmployeeFunc() {
+    try {
+        const checkForNext = await inquirer.prompt(nextEmployee);
+        if (checkForNext.addEmployee) {
+            await createTeam();
+            return teamPage;
+        } else {
+            return teamPage;
+        }
+    } catch (err) {
+        console.log(err.name + " in nextEmployeeFunc");
+    }
 }
 
-// Function call to initialize app
-init();
+async function createTeam() {
+    try {
+        const userInput = await inquirer.prompt(employeeQuestions);
+
+        switch (userInput.role) {
+            case "Manager":
+                try {
+                    const managerInput = await inquirer.prompt(managerQuestions);
+                    const { eName, id, email, officeNumber } = managerInput;
+
+                    let manager = new Manager(eName, id, email, officeNumber);
+                    team.push(manager);
+                    await nextEmployeeFunc();
+
+                } catch (err) {
+                    console.log(err.name + " in manager creation");
+                }
+                break;
+            case "Engineer":
+                try {
+                    const engineerInput = await inquirer.prompt(engineerQuestions);
+                    const { eName, id, email, github } = engineerInput;
+
+                    let engineer = new Engineer(eName, id, email, github);
+                    team.push(engineer);
+                    await nextEmployeeFunc();
+
+                } catch (err) {
+                    console.log(err.name + " in engineer creation");
+                }
+                break;
+            case "Intern":
+                try {
+                    const internInput = await inquirer.prompt(internQuestions);
+                    const { eName, id, email, school } = internInput;
+
+                    let intern = new Intern(eName, id, email, school);
+                    team.push(intern);
+                    await nextEmployeeFunc();
+
+                } catch (err) {
+                    console.log(err.name + " in intern creation");
+                }
+                break;
+        }
+    } catch (error) {
+        console.log(err.name + " in team creation");
+    } finally {
+        return team;
+    }
+}
+
+async function createTeamPageHTML() {
+    await createTeam();
+
+    fs.writeFile('team-page-generated.html', buildPage(team), (err) =>
+        err ? console.log(err) : console.log('Successfully created team page!')
+    );
+}
+
+createTeamPageHTML();
