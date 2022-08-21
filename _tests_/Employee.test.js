@@ -9,7 +9,7 @@ describe("Employee", () => {
     it("Can set name via constructor arguments", () => {
         const nameVal = "Gideon";
         const employee = new Employee(nameVal);
-        expect(employee.name).toBe(nameVal);
+        expect(employee.eName).toBe(nameVal);
     });
 
     it("Can set id via constructor argument", () => {

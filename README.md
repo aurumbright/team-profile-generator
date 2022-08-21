@@ -10,7 +10,9 @@ This application includes tests for each class and a page template for the resul
 
 The following image shows a mock-up of the generated HTML’s appearance and functionality:
 
-Click here to view a short video showcasing the application's functionality.
+![A screenshot of a webpage showing profiles of employees in a company including a manager, engineers, and interns](assets/Generate-profiles-screenshot.png)
+
+[Click here to view a short video showcasing the application's functionality](https://drive.google.com/file/d/1bW_fIzABF1Ifuobu7LrzfzYHxz8M4DjZ/view?usp=sharing).
 
 
 ## User Story
